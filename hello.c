@@ -5,16 +5,17 @@
 
 // Callback function for when the module is loaded into the kernel.
 // The return value will determine if the loading of the module was successful.
-int my_init(void) {
+static int __init my_init(void) {
     // Can't use stdout because there is no stdout for the Linux kernel. 
     // We will instead write to the kernel's log.
-    printk("Hello, Kernel!\n");
+    printk("hello - Hello, Kernel!\n");
     return 0;
 }
 
 // Callback function for when the module is removed from the kernel.
-void my_exit(void) {
-    printk("Goodbye, Kernel!\n");
+// Declaring this as static makes this function only available within this kernel module.
+static void __exit my_exit(void) {
+    printk("hello - Goodbye, Kernel!\n");
 }
 
 // Specify the function to use when the module is loaded into the kernel.
@@ -24,4 +25,9 @@ module_init(my_init);
 module_exit(my_exit);
 
 // Specify the license of this kernel module.
+// Some Linux distributions only allow you to use free/open source kernel modules.
 MODULE_LICENSE("GPL");
+
+// Specify the metadata of this kernel module.
+MODULE_AUTHOR("Preston");
+MODULE_DESCRIPTION("A simple Hello World Linux kernel module");
