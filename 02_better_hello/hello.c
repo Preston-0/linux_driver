@@ -8,14 +8,14 @@
 static int __init my_init(void) {
     // Can't use stdout because there is no stdout for the Linux kernel. 
     // We will instead write to the kernel's log.
-    printk("hello - Hello, Kernel!\n");
+    printk(KERN_INFO "hello - Hello, Kernel!\n");
     return 0;
 }
 
 // Callback function for when the module is removed from the kernel.
 // Declaring this as static makes this function only available within this kernel module.
 static void __exit my_exit(void) {
-    printk("hello - Goodbye, Kernel!\n");
+    printk(KERN_INFO "hello - Goodbye, Kernel!\n");
 }
 
 // Specify the function to use when the module is loaded into the kernel.

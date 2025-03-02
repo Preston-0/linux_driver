@@ -7,7 +7,7 @@
 static int major_dev_num;  // Major device number that will be allocated by our kernel module.
 
 static ssize_t my_read(struct file *f, char __user *u, size_t l, loff_t *o) {
-    printk("hello_cdev - Read is called\n");
+    printk(KERN_INFO "hello_cdev - Read is called\n");
     return 0;
 }
 
@@ -28,12 +28,12 @@ static int __init my_init(void) {
 
     // Check for error while registering the character device.
     if (major_dev_num < 0) {
-        printk("hello_cdev - Error registering chrdev\n");
+        printk(KERN_ERR "hello_cdev - Error registering chrdev\n");
         return major_dev_num;
     }
 
     // The registration of the character device worked.
-    printk("hello_cdev - Major device number: %d\n", major_dev_num);
+    printk(KERN_INFO "hello_cdev - Major device number: %d\n", major_dev_num);
     return 0;
 }
 
