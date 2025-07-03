@@ -1,0 +1,11 @@
+# VSCode local folder
+.vscode
+
+# Any files with these extensions:
+*.cmd
+*.ko
+*.mod
+*.mod.c
+*.o
+*.symvers
+*.order
