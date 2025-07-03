@@ -13,7 +13,10 @@ static int __init my_init(void) {
 }
 
 // Callback function for when the module is removed from the kernel.
-// Declaring this as static makes this function only available within this kernel module.
+// Declaring this function as static:
+//   • Limits their visibility and linkage.
+//   • Can't call this function from outside this source file.
+//   • Makes this function only available within this kernel module.
 static void __exit my_exit(void) {
     printk(KERN_INFO "hello - Goodbye, Kernel!\n");
 }

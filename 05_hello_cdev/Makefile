@@ -1,5 +1,5 @@
 # All object files that are behind "obj-m" will be built as kernel modules.
-# The compilation from hello.c to hello.o is done automatically by the make file's Linux kernel headers.
+# The compilation from hello_cdev.c to hello_cdev.o is done automatically by the make file's Linux kernel headers.
 obj-m += hello_cdev.o
 
 # Default target. Calls a make file.
