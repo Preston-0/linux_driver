@@ -42,8 +42,11 @@ static struct file_operations fops = {
     .release = my_release,
 };
 
-// Callback function for when the module is loaded into the kernel.
-// The return value will determine if the loading of the module was successful.
+/**
+ * @brief Callback function for when the module is loaded into the kernel.
+ * 
+ * @return Zero if the loading of the module was successful.
+ */
 static int __init my_init(void) {
     // register_chrdev(): 
     //   Will allocate device numbers, create a character device, and link the device numbers to the character device.
@@ -65,11 +68,15 @@ static int __init my_init(void) {
     return 0;
 }
 
-// Callback function for when the module is removed from the kernel.
-// Declaring this function as static:
-//   • Limits their visibility and linkage.
-//   • Can't call this function from outside this source file.
-//   • Makes this function only available within this kernel module.
+/**
+ * @brief Callback function for when the module is removed from the kernel.
+ * Declaring this function as static:
+ *   • Limits their visibility and linkage.
+ *   • Can't call this function from outside this source file.
+ *   • Makes this function only available within this kernel module.
+ * 
+ * @return void
+ */
 static void __exit my_exit(void) {
     // Delete the character device and free the allocated device numbers via `unregister_chrdev()`.
     // `unregister_chrdev()`'s 2nd arg is the label that appears in `/proc/devices`.

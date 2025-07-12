@@ -3,8 +3,11 @@
 #include <linux/module.h>
 #include <linux/init.h>
 
-// Callback function for when the module is loaded into the kernel.
-// The return value will determine if the loading of the module was successful.
+/**
+ * @brief Callback function for when the module is loaded into the kernel.
+ * 
+ * @return Zero if the loading of the module was successful.
+ */
 static int __init my_init(void) {
     // Can't use stdout because there is no stdout for the Linux kernel. 
     // We will instead write to the kernel's log.
@@ -12,11 +15,15 @@ static int __init my_init(void) {
     return 0;
 }
 
-// Callback function for when the module is removed from the kernel.
-// Declaring this function as static:
-//   • Limits their visibility and linkage.
-//   • Can't call this function from outside this source file.
-//   • Makes this function only available within this kernel module.
+/**
+ * @brief Callback function for when the module is removed from the kernel.
+ * Declaring this function as static:
+ *   • Limits their visibility and linkage.
+ *   • Can't call this function from outside this source file.
+ *   • Makes this function only available within this kernel module.
+ * 
+ * @return void
+ */
 static void __exit my_exit(void) {
     printk(KERN_INFO "hello - Goodbye, Kernel!\n");
 }
