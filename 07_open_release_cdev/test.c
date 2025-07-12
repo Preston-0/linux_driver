@@ -3,6 +3,7 @@
 #include <unistd.h>  // For open and close.
 #include <fcntl.h>  // For the flags being associated with our character device.
 
+// This is a user space program.
 int main(int argc, char **argv) {
     int fd;  // File descriptor.
 

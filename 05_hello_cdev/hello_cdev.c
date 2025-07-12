@@ -13,7 +13,7 @@ static ssize_t my_read(struct file *f, char __user *u, size_t l, loff_t *o) {
 
 static struct file_operations fops = {
     // Overload the read function pointer.
-    .read = my_read
+    .read = my_read  // This will call our `my_read()` callback function.
 };
 
 // Callback function for when the module is loaded into the kernel.
@@ -24,7 +24,7 @@ static int __init my_init(void) {
     //   • 1st arg is the major device number that it should allocate for the device number.
     //       • If zero, it will search for and use a free device number.
     //       • If non-zero, it will allocate all 255 minor device numbers for that major device number.
-    //   • 2nd arg is a label, which will appear in /proc devices.
+    //   • 2nd arg is a label, which will appear in `/proc/devices`.
     //   • 3rd arg is a pointer to the file operations, which should be supported by our character device.
     major_dev_num = register_chrdev(0, "hello_cdev", &fops);
 
@@ -45,8 +45,8 @@ static int __init my_init(void) {
 //   • Can't call this function from outside this source file.
 //   • Makes this function only available within this kernel module.
 static void __exit my_exit(void) {
-    // Delete the character device and free the device numbers via `unregister_chrdev()`.
-    // `unregister_chrdev()`'s 2nd arg is the label that appears in /proc devices.
+    // Delete the character device and free the allocated device numbers via `unregister_chrdev()`.
+    // `unregister_chrdev()`'s 2nd arg is the label that appears in `/proc/devices`.
     unregister_chrdev(major_dev_num, "hello_cdev");
 }
 
