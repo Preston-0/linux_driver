@@ -22,7 +22,7 @@ static struct file_operations fops = {
  * @return Zero if the loading of the module was successful.
  */
 static int __init my_init(void) {
-    // register_chrdev(): 
+    // `register_chrdev()`:
     //   Will allocate device numbers, create a character device, and link the device numbers to the character device.
     //   • 1st arg is the major device number that it should allocate for the device number.
     //       • If zero, it will search for and use a free device number.
@@ -33,7 +33,7 @@ static int __init my_init(void) {
 
     // Check for error while registering the character device.
     if (major_dev_num < 0) {
-        printk(KERN_ERR "hello_cdev - Error registering chrdev\n");
+        printk(KERN_ERR "hello_cdev - Error registering character device\n");
         return major_dev_num;
     }
 
@@ -44,12 +44,11 @@ static int __init my_init(void) {
 
 /**
  * @brief Callback function for when the module is removed from the kernel.
+ * @details
  * Declaring this function as static:
  *   • Limits their visibility and linkage.
  *   • Can't call this function from outside this source file.
  *   • Makes this function only available within this kernel module.
- * 
- * @return void
  */
 static void __exit my_exit(void) {
     // Delete the character device and free the allocated device numbers via `unregister_chrdev()`.
