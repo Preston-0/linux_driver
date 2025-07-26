@@ -3,8 +3,14 @@
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/fs.h>  // "fs" stands for "file system."
+#include <linux/ioctl.h>
 
+#include "ioctl_test.h"
+
+/* Global variables */
 static int major_dev_num;  // Major device number that will be allocated by our kernel module.
+static int32_t answer = 42;  // Global variable for reading and writing.
+
 
 static int my_open(struct inode *inode, struct file *filep) {
 // • `struct inode` represents a file. We can get the major and minor device number of the
@@ -17,16 +23,7 @@ static int my_open(struct inode *inode, struct file *filep) {
 //    If not, the callback function specified in our driver is never called.
 
     // Print out the major and minor device numbers of the currently opened file.
-    pr_info("hello_cdev - Major: %d, Minor %d\n", imajor(inode), iminor(inode));
-
-    // Print out the file position of the currently opened file.
-    pr_info("hello_cdev - filep->f_pos: %lld\n", filep->f_pos);
-
-    // Print out the permissions of the currently opened file.
-    pr_info("hello_cdev - filep->f_mode: %u\n", filep->f_mode);
-
-    // Print out the flags of the currently opened file.
-    pr_info("hello_cdev - filep->f_flags: %u\n", filep->f_flags);
+    pr_info("ioctl_example - Major: %d, Minor %d\n", imajor(inode), iminor(inode));
 
     return 0;  // Indicate that opening the file was successful.
 }
@@ -37,7 +34,45 @@ static int my_open(struct inode *inode, struct file *filep) {
  * @return Return code.
  */
 static int my_release(struct inode *inode, struct file *filep) {
-    pr_info("hello_cdev - File is closed.\n");
+    pr_info("ioctl_example - File is closed.\n");
+    return 0;
+}
+
+/**
+ * @brief 
+ * 
+ * @param[in] file: Our device file.
+ * @param[in] cmd: The command.
+ * @param[in] arg: Potential argument(s).
+ * @return Return code.
+ */
+static long int my_ioctl(struct file *file, unsigned cmd, unsigned long arg) {
+    struct mystruct test;
+
+    // The function that will be executed depends on the command.
+    // IOCtl is a very driver-specific function because on every device there are different
+    // commands that are available.
+    switch(cmd) {
+        case WRITE_FROM_USER_TO_KERNEL:
+            if (copy_from_user(&answer, (int32_t *) arg, sizeof(answer)))
+                pr_err("ioctl_example - Error copying data from user!.\n");
+            else
+                pr_info("ioctl_example - Updated the answer to %d\n", answer);
+            break;
+        case WRITE_FROM_KERNEL_TO_USER:
+            if (copy_to_user((int32_t *) arg, &answer, sizeof(answer)))
+                pr_err("ioctl_example - Error copying data to user!.\n");
+            else
+                pr_info("ioctl_example - The answer was copied!\n");
+            break;
+        case GREETER:
+            if (copy_from_user(&test, (struct mystruct *) arg, sizeof(test)))
+                pr_err("ioctl_example - Error copying data from user!.\n");
+            else
+                pr_info("ioctl_example - %d greetings to %s\n", test.repeat, test.name);
+            break;
+    }
+
     return 0;
 }
 
@@ -45,6 +80,7 @@ static struct file_operations fops = {
     // Set file operations function pointers to our own functions.
     .open = my_open,
     .release = my_release,
+    .unlocked_ioctl = my_ioctl,
 };
 
 /**
@@ -60,16 +96,16 @@ static int __init my_init(void) {
     //       • If non-zero, it will allocate all 255 minor device numbers for that major device number.
     //   • 2nd arg is a label, which will appear in `/proc/devices`.
     //   • 3rd arg is a pointer to the file operations, which should be supported by our character device.
-    major_dev_num = register_chrdev(0, "hello_cdev", &fops);
+    major_dev_num = register_chrdev(0, "ioctl_example", &fops);
 
     // Check for error while registering the character device.
     if (major_dev_num < 0) {
-        pr_err("hello_cdev - Error registering chrdev\n");
+        pr_err("ioctl_example - Error registering chrdev\n");
         return major_dev_num;
     }
 
     // The registration of the character device worked.
-    pr_info("hello_cdev - Major device number: %d\n", major_dev_num);
+    pr_info("ioctl_example - Major device number: %d\n", major_dev_num);
     return 0;
 }
 
@@ -85,7 +121,7 @@ static int __init my_init(void) {
 static void __exit my_exit(void) {
     // Delete the character device and free the allocated device numbers via `unregister_chrdev()`.
     // `unregister_chrdev()`'s 2nd arg is the label that appears in `/proc/devices`.
-    unregister_chrdev(major_dev_num, "hello_cdev");
+    unregister_chrdev(major_dev_num, "ioctl_example");
 }
 
 // Specify the function to use when the module is loaded into the kernel.
@@ -100,4 +136,4 @@ MODULE_LICENSE("GPL");
 
 // Specify the metadata of this kernel module.
 MODULE_AUTHOR("Preston");
-MODULE_DESCRIPTION("A sample driver for registering a character device");
+MODULE_DESCRIPTION("A simple example for ioctl in a LKM.");

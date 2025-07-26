@@ -7,7 +7,8 @@ int main(int argc, char **argv) {
     int fd;  // File descriptor.
     char c;
 
-    {  // Test #1: Open our character device [driver] with read/write permissions.
+    {  /* Test #1 */
+        // Open our character device [driver] with read/write permissions.
         fd = open("/dev/hello0", O_RDWR);
 
         // Check if we couldn't open the file.
