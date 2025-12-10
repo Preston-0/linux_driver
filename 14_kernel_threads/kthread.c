@@ -56,7 +56,7 @@ static int __init my_init(void) {
 
     // Start "kthread_1."
     wake_up_process(kthread_1);
-    pr_info("kthread - Thread 1 was created and is now running!\n");
+    pr_info("kthread - Thread 1 was created and is now running.\n");
 
     // Create and run "kthread_2." `kthread_run()` will create a thread and run it.
     kthread_2 = kthread_run(thread_function, &t2_data, "kthread_2");
@@ -68,7 +68,7 @@ static int __init my_init(void) {
         return -1;  // We can't continue. Indicate that we failed.
     }
     else  // Thread 2 has successfully been created and started.
-        pr_info("kthread - Thread 2 was created and is now running!\n");
+        pr_info("kthread - Thread 2 was created and is now running.\n");
 
     pr_info("kthread - Both threads are now running!\n");
 
@@ -85,7 +85,7 @@ static int __init my_init(void) {
  */
 static void __exit my_exit(void) {
     // Stop both threads.
-    pr_info("kthread - Stopping both threads.\n");
+    pr_info("kthread - Stopping both threads...\n");
     kthread_stop(kthread_1);
     kthread_stop(kthread_2);
 }

@@ -9,12 +9,13 @@ static char text[64];
 
 
 /**
- * @brief The `read()` callback function.
- * 
+ * @brief The `read()` callback function. Writes from kernel space to user space.
+ *
  * @param[in] filp: An opened file in the Linux kernel.
  * @param[in] user_buf: A user space buffer.
  * @param[in] len: Length of the buffer.
  * @param[inout] off: Our current file offset.
+ *
  * @return The number of bytes that were read successfully.
  */
 static ssize_t my_read(struct file *filp, char __user *user_buf, size_t len, loff_t *off) {
@@ -51,12 +52,13 @@ static ssize_t my_read(struct file *filp, char __user *user_buf, size_t len, lof
 }
 
 /**
- * @brief The `write()` callback function.
- * 
+ * @brief The `write()` callback function. Writes from user space to kernel space.
+ *
  * @param[in] filp: An opened file in the Linux kernel.
  * @param[in] user_buf: A user space buffer.
- * @param[in] len: Length of the buffer.
+ * @param[in] len: Length of the user space buffer.
  * @param[inout] off: Our current file offset.
+ *
  * @return The number of bytes that were written successfully.
  */
 static ssize_t my_write(struct file *filp, const char __user *user_buf, size_t len, loff_t *off) {
@@ -89,13 +91,14 @@ static ssize_t my_write(struct file *filp, const char __user *user_buf, size_t l
 
 static struct file_operations fops = {
     // Set file operations function pointers to our own functions.
-    .read = my_read,  // The `read` callback function.
-    .write = my_write,  // The `write` callback function.
+    .owner = THIS_MODULE,
+    .read = my_read,  // The `read()` callback function.
+    .write = my_write,  // The `write()` callback function.
 };
 
 /**
  * @brief Callback function for when the module is loaded into the kernel.
- * 
+ *
  * @return Zero if the loading of the module was successful.
  */
 static int __init my_init(void) {
